@@ -1,0 +1,21 @@
+#ifndef TRACE_CONFIG_H
+#define TRACE_CONFIG_H
+
+/* UART, CALLBACK or ITM */
+#define TTRACE_USE_UART
+
+/* Application */
+#define TRACE_ENABLE_BSP              TTRACE_INFO
+#define TRACE_ENABLE_MAIN             TTRACE_INFO
+#define TRACE_ENABLE_RC               TTRACE_INFO
+#define TRACE_ENABLE_TESTCMD          TTRACE_INFO
+#define TRACE_ENABLE_MQTT_LINK        TTRACE_INFO
+
+#define TRACE_ENABLE_MODBUS         TTRACE_INFO
+#define TRACE_ENABLE_MODBUS_RTU     TTRACE_INFO
+
+/* Drivers */
+#define TRACE_ENABLE_CONFIG        TTRACE_INFO
+/* MCU Driver */
+#define TRACE_ENABLE_MCAL_RCC     TTRACE_WARN
+#endif
