@@ -1,8 +1,9 @@
 #define MODULE_NAME MQTT_LINK
 #include "trace.h"
+#include "lwip/err.h"
+#include "lwip/ip_addr.h"
 #include "mqtt.h"
 #include <string.h>
-#include "lwip/err.h"
 #include "blf.h"
 
 static mqtt_client_t mqtt_client;
@@ -85,7 +86,9 @@ void mqtt_link_init(void)
   memset(&client_info, 0, sizeof(client_info));
   client_info.client_id = "rclink";
   client_info.keep_alive = 120;
-  mqtt_client_connect(&mqtt_client, "192.168.2.1", connect_callback, 0, &client_info);
+  ip_addr_t ipaddr;
+  IP_ADDR4(&ipaddr, 192, 168, 2, 1);
+  mqtt_client_connect(&mqtt_client, &ipaddr, connect_callback, 0, &client_info);
   //mqtt_connect(&mqtt_client, "192.168.4.1", connect_callback, 0);
 }
 
