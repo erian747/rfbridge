@@ -216,7 +216,7 @@ static void timer_cb(void *ctx)
 
   } else { // Changed state
     uint32_t us = rx_pin_stable_count * RX_POLL_PERIOD_US;
-    if(us >= 250) {
+    if(us >= 250 && us <= 25000) {
       rx_found_valid = 1;
       CBUF_Push(rx_fifo, us);
     } else if(rx_found_valid) {
@@ -300,37 +300,14 @@ static int ev1527_decode(uint16_t pw, char *s, int sl)
     if(ev1527_state != 0) {
       ev1527_state = 0;
     }
-  } else if(ev1527_state == 0) {
-    // Wait for valid preamble */
-    if(pw >= 300 && pw <= 1500) {
-//      TTRACE(TTRACE_INFO, "EV1527: Sync high length %d\n", pw);
-      ev1527_state++;
-    } else {
-      ev1527_state = 0;
-      //TTRACE(TTRACE_INFO, "EV1527: Wrong sync high length %d\n", pw);
-      //ev1527_state = 255;
-    }
-  } else if(ev1527_state == 1) { // Wait for sync pulse
-    if(pw > 12000 && pw < 14000) {
-      TTRACE(TTRACE_INFO, "EV1527: Sync detected enter data state\n");
-      ev1527_data = 0;
-      ev1527_state = 2;
-    } else {
-      ev1527_state = 0;
-    }
-
-  }
-
-  else if(ev1527_state == 255) {
-    ev1527_state = 0; // Ignore negative pulse
-  } else {
-    if(pw > 12000 && pw < 14000) {
-      TTRACE(TTRACE_INFO, "EV1527: Sync detected in data state, restarting\n");
-      ev1527_data = 0;
-      ev1527_state = 2;
-    } else if(pw > 1500) {
+  } else if(pw > 12000 && pw < 14000) {
+    TTRACE(TTRACE_INFO, "EV1527: Sync detected enter data state\n");
+    ev1527_data = 0;
+    ev1527_state = 2;
+  } else if(ev1527_state >= 2) {
+    if(pw > 1500) {
       TTRACE(TTRACE_INFO, "EV1527: To long data pulse %dus in state %d\n", pw, ev1527_state);
-      ev1527_state = (ev1527_state & 1) ? 255 : 0;
+      ev1527_state = 0;
     } else {
 
       if(ev1527_state & 1) {
