@@ -340,8 +340,9 @@ static int ev1527_decode(uint16_t pw, char *s, int sl)
 static uint8_t nexa_state=0;
 static uint32_t nexa_data=0;
 
-static void nexa_decode(uint16_t pw)
+static int nexa_decode(uint16_t pw, char *s, int sl)
 {
+  int res = 0;
   if(pw == 0) {
     nexa_state = 0;
   } else if(nexa_state == 0) {
@@ -381,11 +382,13 @@ static void nexa_decode(uint16_t pw)
       TTRACE(TTRACE_INFO, "NEXA: 0x%x\n", nexa_data);
       TTRACE(TTRACE_INFO, "NEXA: house code 0x%x, unit %d, cmd: %d, channel: %d\n",
              nexa_data >> 6, nexa_data & 3, (nexa_data>>4) & 3, (nexa_data>>2) & 3);
-
+      snprintf(s, sl, "NEXA: %lu",nexa_data);
+      res = 1;
       nexa_state = 0;
     }
 
   }
+  return res;
 }
 
 #if 0
