@@ -297,9 +297,8 @@ static int ev1527_decode(uint16_t pw, char *s, int sl)
 {
   int res = 0;
   if(pw == 0) {
-    if(ev1527_state != 0) {
-      ev1527_state = 0;
-    }
+    ev1527_state = 0;
+    GPIO_write(BSP_LED_RX, 1);
   } else if(pw > 12000 && pw < 14000) {
     TTRACE(TTRACE_INFO, "EV1527: Sync detected enter data state\n");
     ev1527_data = 0;
@@ -308,6 +307,7 @@ static int ev1527_decode(uint16_t pw, char *s, int sl)
     if(pw > 1500) {
       TTRACE(TTRACE_INFO, "EV1527: To long data pulse %dus in state %d\n", pw, ev1527_state);
       ev1527_state = 0;
+      GPIO_write(BSP_LED_RX, 1);
     } else {
 
       if(ev1527_state & 1) {
@@ -320,12 +320,16 @@ static int ev1527_decode(uint16_t pw, char *s, int sl)
       } else {
         ll = pw;
       }
-
-      if(ev1527_state >= (24*2)+2) {
+      // Light up RX led if at least some bits are received
+      if(ev1527_state == 24) {
+        GPIO_write(BSP_LED_RX, 0);
+      }
+      else if(ev1527_state >= (24*2)+2) {
         correct_decodes++;
         TTRACE(TTRACE_INFO, "EV1527: 0x%x lo %d, high %d, n: %d\n", ev1527_data, ll, hl, correct_decodes);
         snprintf(s, sl, "EV1527: %lu",ev1527_data);
         res = 1;
+        GPIO_write(BSP_LED_RX, 1);
         ev1527_state = 0;
       }
     }

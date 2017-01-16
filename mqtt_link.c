@@ -7,6 +7,8 @@
 #include "blf.h"
 
 static mqtt_client_t mqtt_client;
+static void connect_to_server(void);
+
 
 static void sub_callback(void *ctx, err_t result)
 {
@@ -18,42 +20,28 @@ static void publish_callback(void *ctx, err_t result)
   TTRACE(TTRACE_INFO, "Publish callback result: \n", result);
 }
 
-/*
-static void connect_info_callback(mqtt_client_t *client, void *ctx,  mqtt_connect_info_t *ci, mqtt_set_connect_info_cb cb)
 
-  else if(status == MQTT_CONNECT_STATUS_GET_INFO)
-  {
-     //mqtt_connect_info_t ci;
-     //mqtt_client_init_connect_info(&ci);
-     ci.client_id = "RCLink"
-     ci.user_id = "name"
-     ci.pass = "password"
-     mqtt_client_set_connect_info(client, &ci);
-     cb(client, ci);
-  }
-*/
-static BLFCbTimer publishTimer;
-/*
-static int testseq = 0;
-static void publish_timer_cb(BLFCbTimer *timer, void *ctx)
-{
-  char data[32];
-  sprintf(data, "Test seq %d", testseq);
-  testseq++;
-  mqtt_publish(&mqtt_client, "rclink/rx433", data, strlen(data), 0, 0, publish_callback, 0);
-  BLF_startCbTimer(&publishTimer, publish_timer_cb, NULL, 1000);
-}
-*/
+
 static void connect_callback(mqtt_client_t *client, void *ctx, mqtt_connection_status_t status)
 {
   if(status == MQTT_CONNECT_ACCEPTED) {
     mqtt_subscribe(client, "rclink/tx433", 0, sub_callback, 0);
     mqtt_subscribe(client, "rclink/cmd", 0, sub_callback, 0);
-    // BLF_startCbTimer(&publishTimer, publish_timer_cb, NULL, 1000);
-
   } else {
-    TTRACE(TTRACE_WARN, "Disconnect result: %d\n", status);
+    TTRACE(TTRACE_WARN, "Disconnect result: %d, reconnecting\n", status);
+    connect_to_server();
   }
+}
+
+static void connect_to_server(void)
+{
+  struct mqtt_connect_client_info_t client_info;
+  memset(&client_info, 0, sizeof(client_info));
+  client_info.client_id = "rclink";
+  client_info.keep_alive = 120;
+  ip_addr_t ipaddr;
+  IP_ADDR4(&ipaddr, 192, 168, 2, 1);
+  mqtt_client_connect(&mqtt_client, &ipaddr, connect_callback, 0, &client_info);
 }
 
 void mqtt_link_publish(void)
@@ -81,14 +69,6 @@ void mqtt_link_publish_rcrx(const char *s)
 
 void mqtt_link_init(void)
 {
-  BLF_initCbTimer(&publishTimer);
-  struct mqtt_connect_client_info_t client_info;
-  memset(&client_info, 0, sizeof(client_info));
-  client_info.client_id = "rclink";
-  client_info.keep_alive = 120;
-  ip_addr_t ipaddr;
-  IP_ADDR4(&ipaddr, 192, 168, 2, 1);
-  mqtt_client_connect(&mqtt_client, &ipaddr, connect_callback, 0, &client_info);
-  //mqtt_connect(&mqtt_client, "192.168.4.1", connect_callback, 0);
+  connect_to_server();
 }
 
