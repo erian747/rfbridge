@@ -65,7 +65,7 @@ enum
 #define BSP_DIP_SW4_2             GPIO_MAKEPIN(1,12) // On=Low
 #define BSP_DIM_PWM1              GPIO_MAKEPIN(1,13) // TIM1_CH1N, AF: 2
 #define BSP_DIM_PWM2              GPIO_MAKEPIN(1,14) // TIM1_CH2N, AF: 2
-#define BSP_DIM_PWM3              GPIO_MAKEPIN(1,15) // TIM1_CH3N, AF: 2
+#define BSP_433MHZ_RX             GPIO_MAKEPIN(1,15) // TIM1_CH3N, AF: 2
 
 // PC
 #define BSP_RC_TX_PIN             GPIO_MAKEPIN(2,3)

@@ -184,7 +184,7 @@ static uint8_t simulated_rc_pin(void)
 
 #define rx_rc_pin_get() simulated_rc_pin()
 #else
-#define rx_rc_pin_get() GPIO_read(BSP_315MHZ_RX)
+#define rx_rc_pin_get() GPIO_read(BSP_433MHZ_RX) //GPIO_read(BSP_315MHZ_RX)
 #endif
 
 static uint32_t repeat_supress_tmr = 0;
@@ -216,7 +216,7 @@ static void timer_cb(void *ctx)
 
   } else { // Changed state
     uint32_t us = rx_pin_stable_count * RX_POLL_PERIOD_US;
-    if(us >= 250 && us <= 25000) {
+    if(us >= 100 && us <= 30000) {
       rx_found_valid = 1;
       CBUF_Push(rx_fifo, us);
     } else if(rx_found_valid) {
@@ -260,8 +260,8 @@ void rc_send_anslut(int pin, uint32_t code, uint8_t unit, uint8_t cmd)
 }
 
 
-#define nexa_is_short_pulse(_usec) (_usec >= (ANSLUT_PULSE_HIGH-100) && _usec <= (ANSLUT_PULSE_HIGH+100))
-#define nexa_is_long_pulse(_usec) (_usec > (ANSLUT_PULSE_ZERO_LOW-300) && _usec < (ANSLUT_PULSE_ZERO_LOW+300))
+#define nexa_is_short_pulse(_usec) (_usec >= (ANSLUT_PULSE_HIGH-150) && _usec <= (ANSLUT_PULSE_HIGH+125))
+#define nexa_is_long_pulse(_usec) (_usec > (ANSLUT_PULSE_ZERO_LOW-350) && _usec < (ANSLUT_PULSE_ZERO_LOW+350))
 
 #define bm_add_bit(bm, b)  bm = (bm << 1) | ((b) != 0)
 #define bm_get_bit(bm, b)  ((bm & (1 << b)) != 0)
@@ -345,33 +345,17 @@ static int nexa_decode(uint16_t pw, char *s, int sl)
   int res = 0;
   if(pw == 0) {
     nexa_state = 0;
-  } else if(nexa_state == 0) {
-    if(pw < 300 && pw > 200) { // Sync high
-      nexa_state++;
-    } else {
-      nexa_state = 255;
-    }
-  } else if(nexa_state == 1) {
-    if(pw < 2900 && pw > 2400 ) {// Sync low
-      nexa_data = 0;
-      nexa_state = 4;
-    } else {
-      nexa_state = 0;
-    }
-  } else if(nexa_state == 255) { // Ignore negative pulse
-    nexa_state = 0;
-  }
-
-  else {
+  } else if(pw < 2900 && pw > 2300 ) {// Sync low
+    nexa_data = 0;
+    nexa_state = 4;
+  } else if(nexa_state >= 4) {
     if((nexa_state & 1) == 0) {
-      if(pw < 200 || pw > 300) {
-        nexa_state = 255;  // High pulse expected to be 250us
+      if(nexa_is_short_pulse(pw) == 0) {
+        nexa_state = 0;  // High pulse expected to be short
       }
     } else if((nexa_state & 3) == 1) {
       bm_add_bit(nexa_data, nexa_is_long_pulse(pw));
-    }
-
-    else {
+    } else {
       if(bm_get_bit(nexa_data, 0) != nexa_is_short_pulse(pw)) { // If long low pulse where detected (1) in state&3=1, expect this to be short
         nexa_state = 0;
       }
@@ -441,7 +425,9 @@ void rc_poll(void)
   char decs[32];
   while(!CBUF_IsEmpty(rx_fifo)) {
     uint16_t pw = CBUF_Pop(rx_fifo);
-    res = ev1527_decode(pw, decs, sizeof(decs));
+    //res = ev1527_decode(pw, decs, sizeof(decs));
+    res = nexa_decode(pw, decs, sizeof(decs));
+
     if(res) {
       // If decode string is different or repeat suppress timer count down to zero
       if(strcmp(decs_prev, decs_prev) != 0 || repeat_supress_tmr == 0) {
