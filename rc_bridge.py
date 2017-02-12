@@ -15,13 +15,17 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_rx_p1(client, code):
-    if code == '6822455' :
+    if code == '6822455' or code == '20118687' :
         print('Button2')
         js = '{{ "idx" : 3, "nvalue" : {:d} }}'.format(1)
         client.publish('domoticz/in', js)
-    elif code == '6822461' :
+    elif code == '6822461' or code == '20118671' :
         print('Button1')
         js = '{{ "idx" : 3, "nvalue" : {:d} }}'.format(0)
+        client.publish('domoticz/in', js)
+    elif code == '15798495' :
+        print('Smoke alarm')
+        js = '{{ "idx" : 11, "nvalue" : 3, "svalue" : "Smoke Alarm"}}'
         client.publish('domoticz/in', js)
 
 # The callback for when a PUBLISH message is received from the server.
