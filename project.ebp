@@ -32,6 +32,7 @@
 				</Assembler>
 				<Linker>
 					<Add option="-eb_lib=n" />
+					<Add option="-eb_use_mon" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -102,6 +103,8 @@
 		<Unit filename="bsp.h" />
 		<Unit filename="config.c">
 			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
 		</Unit>
 		<Unit filename="config.h" />
 		<Unit filename="crashdump.h" />

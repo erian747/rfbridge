@@ -49,7 +49,6 @@ volatile struct {
 
 
 
-
 //#define GPIO_read(pin) ((GPIO_REG_READ(GPIO_IN_ADDRESS) & ((uint32_t)1 << pin)) == 0) // Inverted by 5 to 3.3v level shifter transistor
 
 
@@ -374,6 +373,117 @@ static int nexa_decode(uint16_t pw, char *s, int sl)
   }
   return res;
 }
+/*
+From:
+  https://forum.pilight.org/Thread-Elro-Flamingo-FA20RF-Smoke-detector
+Test Button press 1
+
+--[RESULTS]--
+
+hardware:       433gpio
+pulse:          3
+rawlen:         52
+binlen:         13
+pulselen:       393
+
+Raw code:
+8253 786 786 1572 786 2751 786 2751 786 2751 786 1572 786 1572 786 1572 786 2751 786 2751 786 1572 786 2751 786 2751
+786 2751 786 1572 786 1572 786 2751 786 2751 786 1572 786 2751 786 2751 786 1572 786 2751 786 2751 786 1179 786 13362
+Binary code:
+1111111111111
+
+Test Button press 2
+
+--[RESULTS]--
+
+hardware:       433gpio
+pulse:          4
+rawlen:         52
+binlen:         13
+pulselen:       393
+
+Raw code:
+8253 786 786 1572 786 2751 786 2751 786 2751 786 1572 786 1572 786 1572 786 2751 786 2751 786 1572 786 2751 786 2751
+786 2751 786 1572 786 1572 786 2751 786 2751 786 1572 786 2751 786 2751 786 1572 786 2751 786 2751 786 1572 786 13362
+Binary code:
+1111111111111
+
+Smoke Alert
+
+--[RESULTS]--
+
+hardware:       433gpio
+pulse:          2
+rawlen:         52
+binlen:         13
+pulselen:       391
+
+Raw code:
+8211 782 782 1564 782 2737 782 2737 782 2737 782 1564 782 1564 782 1564 782 2737 782 2737 782 1564 782 2737 782 2737
+782 2737 782 1564 782 1564 782 2737 782 2737 782 1564 782 2737 782 2737 782 1564 782 2737 782 2737 782 1564 782 13294
+*/
+
+static uint8_t fl_state=0;
+static uint32_t fl_data=0;
+
+static int flamingo_decode(uint16_t pw, char *s, int sl)
+{
+  int res = 0;
+  if(pw == 0) {
+    fl_state = 0;
+  } else if(pw < 9000 && pw > 7000 ) {// Sync
+    fl_data = 0;
+    fl_state = 2;
+  } else if(fl_state >= 2) {
+    if(pw >= 1200 && pw <= 1500) {
+      fl_data <<= 1;
+    } else if(pw >= 2400 && pw <= 2900) {
+      fl_data = (fl_data << 1) | 1;
+    }
+
+    fl_state++;
+    if(fl_state >= (50+2)) {
+      TTRACE(TTRACE_INFO, "FLAMINGO: 0x%x\n", fl_data);
+
+      snprintf(s, sl, "FLAMINGO: %lu",fl_data);
+      res = 1;
+      fl_state = 0;
+    }
+
+  }
+  return res;
+}
+
+
+#define DBG_MAX_PULSES 64
+static uint8_t dbg_state=0;
+static uint32_t dbg_data=0;
+static uint16_t dbg_pulses[DBG_MAX_PULSES];
+
+
+static int debug_decode(uint16_t pw, char *s, int sl)
+{
+  int res = 0;
+  if(pw > 3500 || pw == 0) {
+    if(dbg_state > 24) {
+      int o = snprintf(s, sl, "DBG: ");
+      for(int n = 0; n < dbg_state && sl > o; n++) {
+        o+= snprintf(s+o, sl-o, "%u,", dbg_pulses[n]);
+      }
+      res = 1;
+    }
+    dbg_state = (pw == 0) ? 0 : 1;
+  }
+
+  if(dbg_state > 0) {
+    if(dbg_state <= DBG_MAX_PULSES) {
+      dbg_pulses[dbg_state-1] = pw;
+    }
+    dbg_state++;
+  }
+  return res;
+}
+
 
 #if 0
 static void nexa_decode(const uint16_t *rb, uint16_t rawLength)
@@ -405,6 +515,7 @@ static void nexa_decode(const uint16_t *rb, uint16_t rawLength)
     }
   }
   TTRACE(TTRACE_INFO, "RC_PARSE: Found nexa rc string %s\n", outputstr);
+  printf("RC_PARSE: Found nexa rc string %s\n", outputstr);
 }
 #endif
 
@@ -417,24 +528,32 @@ void rc_start_rx(void)
 }
 
 // Previously decoded string
-static char decs_prev[32] = {0};
+static char decs_prev[128] = {0};
 
+
+static void rc_publish_if_no_repeat(char *decs)
+{
+  // If decode string is different or repeat suppress timer count down to zero
+  if(strcmp(decs_prev, decs_prev) != 0 || repeat_supress_tmr == 0) {
+    mqtt_link_publish_rcrx(decs);
+    strcpy(decs_prev, decs);
+      repeat_supress_tmr = 1000000 / RX_POLL_PERIOD_US;
+  }
+}
 void rc_poll(void)
 {
   int res;
-  char decs[32];
+  char decs[128];
   while(!CBUF_IsEmpty(rx_fifo)) {
     uint16_t pw = CBUF_Pop(rx_fifo);
     //res = ev1527_decode(pw, decs, sizeof(decs));
     res = nexa_decode(pw, decs, sizeof(decs));
-
     if(res) {
-      // If decode string is different or repeat suppress timer count down to zero
-      if(strcmp(decs_prev, decs_prev) != 0 || repeat_supress_tmr == 0) {
-        mqtt_link_publish_rcrx(decs);
-        strcpy(decs_prev, decs);
-        repeat_supress_tmr = 1000000 / RX_POLL_PERIOD_US;
-      }
+      rc_publish_if_no_repeat(decs);
+    }
+    res = flamingo_decode(pw, decs, sizeof(decs));
+    if(res) {
+      rc_publish_if_no_repeat(decs);
     }
   }
 
