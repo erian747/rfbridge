@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import paho.mqtt.client as mqtt
 
 #Nexa 1 on: NEXA: 20118687
@@ -25,7 +27,7 @@ def on_rx_p1(client, code):
         client.publish('domoticz/in', js)
     elif code == '15798495' :
         print('Smoke alarm')
-        js = '{{ "idx" : 11, "nvalue" : 3, "svalue" : "Smoke Alarm"}}'
+        js = '{ "idx" : 11, "nvalue" : 3, "svalue" : "Smoke Alarm"}'
         client.publish('domoticz/in', js)
 
 # The callback for when a PUBLISH message is received from the server.
