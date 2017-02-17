@@ -183,7 +183,7 @@ static uint8_t simulated_rc_pin(void)
 
 #define rx_rc_pin_get() simulated_rc_pin()
 #else
-#define rx_rc_pin_get() GPIO_read(BSP_433MHZ_RX) //GPIO_read(BSP_315MHZ_RX)
+#define rx_rc_pin_get() GPIO_read(BSP_315MHZ_RX) // GPIO_read(BSP_433MHZ_RX)
 #endif
 
 static uint32_t repeat_supress_tmr = 0;
@@ -546,7 +546,10 @@ void rc_poll(void)
   char decs[128];
   while(!CBUF_IsEmpty(rx_fifo)) {
     uint16_t pw = CBUF_Pop(rx_fifo);
-    //res = ev1527_decode(pw, decs, sizeof(decs));
+    res = ev1527_decode(pw, decs, sizeof(decs));
+    if(res) {
+      rc_publish_if_no_repeat(decs);
+    }
     res = nexa_decode(pw, decs, sizeof(decs));
     if(res) {
       rc_publish_if_no_repeat(decs);
