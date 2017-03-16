@@ -24,7 +24,7 @@
 #define BLF_USE_DELEGATES 0
 
 // Available memory for framework in bytes
-#define BLF_STATHEAP_SIZE 8192 //1536
+#define BLF_STATHEAP_SIZE 6144 //1536
 
 // Maximum size of a memory pool buffer
 enum

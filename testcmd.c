@@ -23,20 +23,16 @@ void ttrace_key_cb(char data)
   if(data == '1')
   {
     lampState = !lampState;
-    TTRACE(TTRACE_INFO, "Lamp set to: %s\n", lampState ? "On" : "Off");
-    rc_send_nexa(0, 0x12EF212, 0, lampState);
-      
+
   }
   else if(data == 'h')
   {
-    TTRACE(TTRACE_INFO, "GSL node rev: %s\nCommands:\n", FWREV_getString());
+    TTRACE(TTRACE_INFO, "Suncatcher rev: %s\nCommands:\n", FWREV_getString());
     TTRACE(TTRACE_INFO, "1 : Toggle lamp output\n");
     TTRACE(TTRACE_INFO, "h : Help menu\n");
 
   }
-  else if(data == 'p')
-  {
-    mqtt_link_publish();
+  else if(data == 'p') {
   }
   else
   {

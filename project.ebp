@@ -3,7 +3,7 @@
 	<EmBitzVersion release="1.11" revision="0" />
 	<FileVersion major="1" minor="0" />
 	<Project>
-		<Option title="lc" />
+		<Option title="suncatcher" />
 		<Option pch_mode="2" />
 		<Option compiler="armgcc_eb" />
 		<Build>
@@ -32,6 +32,7 @@
 				</Assembler>
 				<Linker>
 					<Add option="-eb_lib=n" />
+					<Add option="-eb_use_mon" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -102,6 +103,8 @@
 		<Unit filename="bsp.h" />
 		<Unit filename="config.c">
 			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
 		</Unit>
 		<Unit filename="config.h" />
 		<Unit filename="crashdump.h" />
@@ -111,352 +114,6 @@
 		</Unit>
 		<Unit filename="fwrev.h" />
 		<Unit filename="iir_filter.h" />
-		<Unit filename="lwip\src\api\err.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\apps\httpd\httpd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\apps\lwiperf\lwiperf.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\apps\mdns\mdns.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\apps\mqtt\mqtt.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\apps\sntp\sntp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\def.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\dns.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\inet_chksum.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\init.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ip.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv4\autoip.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv4\dhcp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv4\etharp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv4\icmp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv4\igmp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv4\ip4.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv4\ip4_addr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv4\ip4_frag.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\dhcp6.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\ethip6.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\icmp6.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\inet6.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\ip6.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\ip6_addr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\ip6_frag.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\mld6.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\ipv6\nd6.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\mem.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\memp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\netif.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\pbuf.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\raw.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\stats.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\sys.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\tcp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\tcp_in.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\tcp_out.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\timeouts.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\core\udp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\include\lwip\api.h" />
-		<Unit filename="lwip\src\include\lwip\apps\fs.h" />
-		<Unit filename="lwip\src\include\lwip\apps\httpd.h" />
-		<Unit filename="lwip\src\include\lwip\apps\httpd_opts.h" />
-		<Unit filename="lwip\src\include\lwip\apps\lwiperf.h" />
-		<Unit filename="lwip\src\include\lwip\apps\mdns.h" />
-		<Unit filename="lwip\src\include\lwip\apps\mdns_opts.h" />
-		<Unit filename="lwip\src\include\lwip\apps\mdns_priv.h" />
-		<Unit filename="lwip\src\include\lwip\apps\mqtt.h" />
-		<Unit filename="lwip\src\include\lwip\apps\netbiosns.h" />
-		<Unit filename="lwip\src\include\lwip\apps\netbiosns_opts.h" />
-		<Unit filename="lwip\src\include\lwip\apps\snmp.h" />
-		<Unit filename="lwip\src\include\lwip\apps\snmp_core.h" />
-		<Unit filename="lwip\src\include\lwip\apps\snmp_mib2.h" />
-		<Unit filename="lwip\src\include\lwip\apps\snmp_opts.h" />
-		<Unit filename="lwip\src\include\lwip\apps\snmp_scalar.h" />
-		<Unit filename="lwip\src\include\lwip\apps\snmp_table.h" />
-		<Unit filename="lwip\src\include\lwip\apps\snmp_threadsync.h" />
-		<Unit filename="lwip\src\include\lwip\apps\snmpv3.h" />
-		<Unit filename="lwip\src\include\lwip\apps\sntp.h" />
-		<Unit filename="lwip\src\include\lwip\apps\sntp_opts.h" />
-		<Unit filename="lwip\src\include\lwip\arch.h" />
-		<Unit filename="lwip\src\include\lwip\autoip.h" />
-		<Unit filename="lwip\src\include\lwip\debug.h" />
-		<Unit filename="lwip\src\include\lwip\def.h" />
-		<Unit filename="lwip\src\include\lwip\dhcp.h" />
-		<Unit filename="lwip\src\include\lwip\dhcp6.h" />
-		<Unit filename="lwip\src\include\lwip\dns.h" />
-		<Unit filename="lwip\src\include\lwip\err.h" />
-		<Unit filename="lwip\src\include\lwip\etharp.h" />
-		<Unit filename="lwip\src\include\lwip\ethip6.h" />
-		<Unit filename="lwip\src\include\lwip\icmp.h" />
-		<Unit filename="lwip\src\include\lwip\icmp6.h" />
-		<Unit filename="lwip\src\include\lwip\igmp.h" />
-		<Unit filename="lwip\src\include\lwip\inet.h" />
-		<Unit filename="lwip\src\include\lwip\inet_chksum.h" />
-		<Unit filename="lwip\src\include\lwip\init.h" />
-		<Unit filename="lwip\src\include\lwip\ip.h" />
-		<Unit filename="lwip\src\include\lwip\ip4.h" />
-		<Unit filename="lwip\src\include\lwip\ip4_addr.h" />
-		<Unit filename="lwip\src\include\lwip\ip4_frag.h" />
-		<Unit filename="lwip\src\include\lwip\ip6.h" />
-		<Unit filename="lwip\src\include\lwip\ip6_addr.h" />
-		<Unit filename="lwip\src\include\lwip\ip6_frag.h" />
-		<Unit filename="lwip\src\include\lwip\ip_addr.h" />
-		<Unit filename="lwip\src\include\lwip\mem.h" />
-		<Unit filename="lwip\src\include\lwip\memp.h" />
-		<Unit filename="lwip\src\include\lwip\mld6.h" />
-		<Unit filename="lwip\src\include\lwip\nd6.h" />
-		<Unit filename="lwip\src\include\lwip\netbuf.h" />
-		<Unit filename="lwip\src\include\lwip\netdb.h" />
-		<Unit filename="lwip\src\include\lwip\netif.h" />
-		<Unit filename="lwip\src\include\lwip\netifapi.h" />
-		<Unit filename="lwip\src\include\lwip\opt.h" />
-		<Unit filename="lwip\src\include\lwip\pbuf.h" />
-		<Unit filename="lwip\src\include\lwip\priv\api_msg.h" />
-		<Unit filename="lwip\src\include\lwip\priv\memp_priv.h" />
-		<Unit filename="lwip\src\include\lwip\priv\memp_std.h" />
-		<Unit filename="lwip\src\include\lwip\priv\tcp_priv.h" />
-		<Unit filename="lwip\src\include\lwip\priv\tcpip_priv.h" />
-		<Unit filename="lwip\src\include\lwip\prot\autoip.h" />
-		<Unit filename="lwip\src\include\lwip\prot\dhcp.h" />
-		<Unit filename="lwip\src\include\lwip\prot\dns.h" />
-		<Unit filename="lwip\src\include\lwip\prot\etharp.h" />
-		<Unit filename="lwip\src\include\lwip\prot\ethernet.h" />
-		<Unit filename="lwip\src\include\lwip\prot\icmp.h" />
-		<Unit filename="lwip\src\include\lwip\prot\icmp6.h" />
-		<Unit filename="lwip\src\include\lwip\prot\igmp.h" />
-		<Unit filename="lwip\src\include\lwip\prot\ip.h" />
-		<Unit filename="lwip\src\include\lwip\prot\ip4.h" />
-		<Unit filename="lwip\src\include\lwip\prot\ip6.h" />
-		<Unit filename="lwip\src\include\lwip\prot\mld6.h" />
-		<Unit filename="lwip\src\include\lwip\prot\nd6.h" />
-		<Unit filename="lwip\src\include\lwip\prot\tcp.h" />
-		<Unit filename="lwip\src\include\lwip\prot\udp.h" />
-		<Unit filename="lwip\src\include\lwip\raw.h" />
-		<Unit filename="lwip\src\include\lwip\sio.h" />
-		<Unit filename="lwip\src\include\lwip\snmp.h" />
-		<Unit filename="lwip\src\include\lwip\sockets.h" />
-		<Unit filename="lwip\src\include\lwip\stats.h" />
-		<Unit filename="lwip\src\include\lwip\sys.h" />
-		<Unit filename="lwip\src\include\lwip\tcp.h" />
-		<Unit filename="lwip\src\include\lwip\tcpip.h" />
-		<Unit filename="lwip\src\include\lwip\timeouts.h" />
-		<Unit filename="lwip\src\include\lwip\udp.h" />
-		<Unit filename="lwip\src\include\netif\etharp.h" />
-		<Unit filename="lwip\src\include\netif\ethernet.h" />
-		<Unit filename="lwip\src\include\netif\lowpan6.h" />
-		<Unit filename="lwip\src\include\netif\lowpan6_opts.h" />
-		<Unit filename="lwip\src\include\netif\ppp\ccp.h" />
-		<Unit filename="lwip\src\include\netif\ppp\chap-md5.h" />
-		<Unit filename="lwip\src\include\netif\ppp\chap-new.h" />
-		<Unit filename="lwip\src\include\netif\ppp\chap_ms.h" />
-		<Unit filename="lwip\src\include\netif\ppp\eap.h" />
-		<Unit filename="lwip\src\include\netif\ppp\ecp.h" />
-		<Unit filename="lwip\src\include\netif\ppp\eui64.h" />
-		<Unit filename="lwip\src\include\netif\ppp\fsm.h" />
-		<Unit filename="lwip\src\include\netif\ppp\ipcp.h" />
-		<Unit filename="lwip\src\include\netif\ppp\ipv6cp.h" />
-		<Unit filename="lwip\src\include\netif\ppp\lcp.h" />
-		<Unit filename="lwip\src\include\netif\ppp\magic.h" />
-		<Unit filename="lwip\src\include\netif\ppp\mppe.h" />
-		<Unit filename="lwip\src\include\netif\ppp\polarssl\arc4.h" />
-		<Unit filename="lwip\src\include\netif\ppp\polarssl\des.h" />
-		<Unit filename="lwip\src\include\netif\ppp\polarssl\md4.h" />
-		<Unit filename="lwip\src\include\netif\ppp\polarssl\md5.h" />
-		<Unit filename="lwip\src\include\netif\ppp\polarssl\sha1.h" />
-		<Unit filename="lwip\src\include\netif\ppp\ppp.h" />
-		<Unit filename="lwip\src\include\netif\ppp\ppp_impl.h" />
-		<Unit filename="lwip\src\include\netif\ppp\ppp_opts.h" />
-		<Unit filename="lwip\src\include\netif\ppp\pppapi.h" />
-		<Unit filename="lwip\src\include\netif\ppp\pppcrypt.h" />
-		<Unit filename="lwip\src\include\netif\ppp\pppdebug.h" />
-		<Unit filename="lwip\src\include\netif\ppp\pppoe.h" />
-		<Unit filename="lwip\src\include\netif\ppp\pppol2tp.h" />
-		<Unit filename="lwip\src\include\netif\ppp\pppos.h" />
-		<Unit filename="lwip\src\include\netif\ppp\upap.h" />
-		<Unit filename="lwip\src\include\netif\ppp\vj.h" />
-		<Unit filename="lwip\src\include\netif\slipif.h" />
-		<Unit filename="lwip\src\include\posix\netdb.h" />
-		<Unit filename="lwip\src\include\posix\sys\socket.h" />
-		<Unit filename="lwip\src\netif\ethernet.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ethernetif.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\lowpan6.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\auth.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\ccp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\chap-md5.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\chap-new.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\chap_ms.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\demand.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\eap.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\ecp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\eui64.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\fsm.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\ipcp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\ipv6cp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\lcp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\magic.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\mppe.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\multilink.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\polarssl\arc4.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\polarssl\des.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\polarssl\md4.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\polarssl\md5.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\polarssl\sha1.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\ppp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\pppapi.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\pppcrypt.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\pppoe.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\pppol2tp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\pppos.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\upap.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\utils.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\ppp\vj.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="lwip\src\netif\slipif.c">
-			<Option compilerVar="CC" />
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
-		<Unit filename="lwipopts.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -635,14 +292,7 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="mdsp\usb\hid_keyboard.h" />
-		<Unit filename="mqtt_link.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="network.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="network.h" />
-		<Unit filename="rc.c">
+		<Unit filename="sm.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="testcmd.c">
@@ -660,37 +310,6 @@
 				<search_path add="..\lib\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\gcc_ride7" />
 			</code_completion>
 			<debugger>
-				<target_debugging_settings target="Release" active_interface="OpenOCD">
-					<debug_interface interface_id="OpenOCD" ip_address="10.0.2.2" ip_port="3333" path="G:\Produktion\Testutrustning\openocd-0.9.0\bin" executable="openocd.exe" description="" dont_start_server="true" backoff_time="2000" options="0" reg_filter="0" active_family="All" gdb_before_conn="" gdb_after_conn="">
-						<family_options family_id="All">
-							<option opt_id="ID_BOARD_CH" opt_value="" />
-							<option opt_id="ID_INTERFACE_CH" opt_value="stlink-v2" />
-							<option opt_id="ID_TARGET_CH" opt_value="stm32f0x_stlink" />
-							<option opt_id="ID_TEXTCTRL1" opt_value="" />
-							<option opt_id="ID_HW_BKP_LIMIT" opt_value="" />
-							<option opt_id="ID_RESET_CH" opt_value="halt" />
-							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
-							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
-							<option opt_id="ID_ADD_COMMANDS" opt_value="" />
-							<option opt_id="ID_ADD_CMNDS" opt_value="" />
-						</family_options>
-					</debug_interface>
-					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBLOCKS}\share\contrib" executable="STLinkGDB.exe" description="STM32F030.svd" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
-						<family_options family_id="STMicroelectronics">
-							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
-							<option opt_id="ID_VECTOR_START" opt_value="0x08000000" />
-							<option opt_id="ID_RESET_TYPE" opt_value="System" />
-							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
-							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
-							<option opt_id="ID_RAM_EXEC" opt_value="0" />
-							<option opt_id="ID_VEC_TABLE" opt_value="0" />
-							<option opt_id="ID_DONT_CONN_RESET" opt_value="0" />
-							<option opt_id="ID_ALL_MODE_DEBUG" opt_value="0" />
-							<option opt_id="ID_DEV_ADDR" opt_value="" />
-							<option opt_id="ID_VERBOSE_LEVEL" opt_value="3" />
-						</family_options>
-					</debug_interface>
-				</target_debugging_settings>
 				<target_debugging_settings target="Debug" active_interface="OpenOCD">
 					<debug_interface interface_id="Generic" ip_address="" ip_port="" path="" executable="" description="" dont_start_server="false" backoff_time="" options="0" reg_filter="0" active_family="" gdb_before_conn="" gdb_after_conn="" />
 					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="%Software\SEGGER\J-Link:InstallPath%" executable="JLinkGDBServer.exe" description="" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
@@ -722,7 +341,7 @@
 							<option opt_id="ID_TARGET_CH" opt_value="stm32f1x" />
 							<option opt_id="ID_TEXTCTRL1" opt_value="" />
 							<option opt_id="ID_HW_BKP_LIMIT" opt_value="" />
-							<option opt_id="ID_RESET_CH" opt_value="halt" />
+							<option opt_id="ID_RESET_CH" opt_value="init" />
 							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
 							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
 							<option opt_id="ID_ADD_COMMANDS" opt_value="" />
@@ -730,6 +349,37 @@
 						</family_options>
 					</debug_interface>
 					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBLOCKS}\share\contrib" executable="STLinkGDB.exe" description="STM32F072x.svd" dont_start_server="true" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
+						<family_options family_id="STMicroelectronics">
+							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
+							<option opt_id="ID_VECTOR_START" opt_value="0x08000000" />
+							<option opt_id="ID_RESET_TYPE" opt_value="System" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_RAM_EXEC" opt_value="0" />
+							<option opt_id="ID_VEC_TABLE" opt_value="0" />
+							<option opt_id="ID_DONT_CONN_RESET" opt_value="0" />
+							<option opt_id="ID_ALL_MODE_DEBUG" opt_value="0" />
+							<option opt_id="ID_DEV_ADDR" opt_value="" />
+							<option opt_id="ID_VERBOSE_LEVEL" opt_value="3" />
+						</family_options>
+					</debug_interface>
+				</target_debugging_settings>
+				<target_debugging_settings target="Release" active_interface="OpenOCD">
+					<debug_interface interface_id="OpenOCD" ip_address="10.0.2.2" ip_port="3333" path="G:\Produktion\Testutrustning\openocd-0.9.0\bin" executable="openocd.exe" description="" dont_start_server="true" backoff_time="2000" options="0" reg_filter="0" active_family="All" gdb_before_conn="" gdb_after_conn="">
+						<family_options family_id="All">
+							<option opt_id="ID_BOARD_CH" opt_value="" />
+							<option opt_id="ID_INTERFACE_CH" opt_value="stlink-v2" />
+							<option opt_id="ID_TARGET_CH" opt_value="stm32f0x_stlink" />
+							<option opt_id="ID_TEXTCTRL1" opt_value="" />
+							<option opt_id="ID_HW_BKP_LIMIT" opt_value="" />
+							<option opt_id="ID_RESET_CH" opt_value="halt" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_ADD_COMMANDS" opt_value="" />
+							<option opt_id="ID_ADD_CMNDS" opt_value="" />
+						</family_options>
+					</debug_interface>
+					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBLOCKS}\share\contrib" executable="STLinkGDB.exe" description="STM32F030.svd" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
 						<family_options family_id="STMicroelectronics">
 							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
 							<option opt_id="ID_VECTOR_START" opt_value="0x08000000" />

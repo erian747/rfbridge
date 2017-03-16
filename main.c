@@ -13,9 +13,9 @@
 #include "crashdump.h"
 #include "usb/hid_keyboard.h"
 
-extern void mqtt_link_init(void);
-extern void rc_timer_init(void);
-extern void rc_poll(void);
+extern void sm_init(void);
+void sm_run(uint8_t dir, int speed, int steps);
+
 /**
   * @brief Program entry point
   * @param None
@@ -62,11 +62,9 @@ int target_main(void)
 #endif
 
 
-  rc_timer_init();
+  sm_init();
+  sm_run(0, 10, 1000000);
 
-  network_init();
-  
-  mqtt_link_init();
   // Start scheduler
   BLF_schedule();
 
@@ -75,7 +73,6 @@ int target_main(void)
     TTRACE_process();
 
 //    config_poll();
-    rc_poll();
   }
 
   return 0;
