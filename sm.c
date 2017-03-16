@@ -3,11 +3,15 @@
 #include "bsp.h"
 #include "blf.h"
 
-static const uint8_t output_pattern[] = {
-  1, 2, 4, 8
+static const uint8_t output_pattern_full_step[] = {
+  9, 3, 6, 0xc,
 };
 
-#define output_pattern_len (sizeof(output_pattern) / sizeof(output_pattern[0]))
+static const uint8_t output_pattern_half_step[] = {
+  1, 3, 2, 6, 4, 0xc, 8, 9
+};
+
+#define output_pattern_len (sizeof(output_pattern_full_step) / sizeof(output_pattern_full_step[0]))
 
 typedef struct {
   int speed;
@@ -33,16 +37,17 @@ static void output(uint8_t pattern)
 static void timer_cb(BLFCbTimer *t, void *ctx)
 {
   sm_t *sm = (sm_t *)ctx;
-  output(output_pattern[sm->os]);
+  output(output_pattern_full_step[sm->os]);
   sm->os++;
   if(sm->os >= output_pattern_len) {
     sm->os = 0;
     sm->steps_remain--;
     if(sm->steps_remain == 0) {
+      output(0);
       return;
     }
   }
-  BLF_startCbTimer(t, timer_cb, sm, 20);
+  BLF_startCbTimer(t, timer_cb, sm, 1);
 }
 
 void sm_run(uint8_t dir, int speed, int steps)
@@ -55,7 +60,7 @@ void sm_run(uint8_t dir, int speed, int steps)
     sm->steps_remain = steps;
     sm->speed = speed;
     sm->dir = dir;
-    BLF_startCbTimer(&timer, timer_cb, sm, 20);
+    BLF_startCbTimer(&timer, timer_cb, sm, 1);
   }
 }
 
