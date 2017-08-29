@@ -7,12 +7,8 @@
 /* Application */
 #define TRACE_ENABLE_BSP              TTRACE_INFO
 #define TRACE_ENABLE_MAIN             TTRACE_INFO
-#define TRACE_ENABLE_RC               TTRACE_INFO
 #define TRACE_ENABLE_TESTCMD          TTRACE_INFO
-#define TRACE_ENABLE_MQTT_LINK        TTRACE_INFO
-
-#define TRACE_ENABLE_MODBUS         TTRACE_INFO
-#define TRACE_ENABLE_MODBUS_RTU     TTRACE_INFO
+#define TRACE_ENABLE_TSL2561          TTRACE_DEBUG
 
 /* Drivers */
 #define TRACE_ENABLE_CONFIG        TTRACE_INFO

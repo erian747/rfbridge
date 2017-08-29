@@ -1,5 +1,6 @@
 #define MODULE_NAME MAIN
 
+#include "hd44780.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "mcal.h"
@@ -8,13 +9,22 @@
 #include "network.h"
 #include "bsp.h"
 #include "fwrev.h"
-
+#include "tsl2561.h"
 #include "config.h"
 #include "crashdump.h"
 #include "usb/hid_keyboard.h"
+#include "sm.h"
+#include "ws2812b.h"
+#include "solc.h"
+#include "button.h"
+extern void suncatcher_init(void);
 
-extern void sm_init(void);
-void sm_run(uint8_t dir, int speed, int steps);
+
+
+void HardFault_Handler(void)
+{
+  while(1);
+}
 
 /**
   * @brief Program entry point
@@ -38,7 +48,6 @@ int target_main(void)
   TTRACE_init();
 #endif
 
-
   // Init configuration
 
  // config_init();
@@ -46,12 +55,20 @@ int target_main(void)
 
 
   BSP_init();
+  //ws2812b_init(rgb_data, sizeof(rgb_data));
   // Start watchdog
 /*
 #ifndef DEBUG
   WDG_start();
 #endif
 */
+
+  hd44780_init();
+
+	//ANALOG_init();
+	BUTTON_init(1);
+
+  solc_t *solc = solc_init();
 
   //hid_keyboard_t *kbd = hid_keyboard_create();
 
@@ -61,18 +78,18 @@ int target_main(void)
     TTRACE_setOutputUart(debugUart);
 #endif
 
+  //sm_init();
+  //suncatcher_init();
 
-  sm_init();
-  sm_run(0, 10, 1000000);
 
+  //sm_run(0, 10, 10000000);
   // Start scheduler
   BLF_schedule();
 
 
   while (1) {
     TTRACE_process();
-
-//    config_poll();
+    solc_bg(solc);
   }
 
   return 0;

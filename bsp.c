@@ -8,7 +8,7 @@
 #include "analog.h"
 #include "iir_filter.h"
 #include "button.h"
-#include "stm32f0xx.h"
+#include "stm32f10x.h"
 
 #define SUPPLY_VOLTAGE_UVLO    8000 // mv
 #define SUPPLY_VOLTAGE_PGOODL  8200 // mv
@@ -66,7 +66,7 @@ void BSP_init(void)
 {
 
   //RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-
+  RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
 
   // Common GPIO config
   const GPIO_config_t gpioCfg[] =
@@ -74,20 +74,38 @@ void BSP_init(void)
 
     // USER uart
     {BSP_DBG_UART_TX,  .mode = GPIO_MODE_AF, 	                              .param = 0x0}, 	// USART2_TX (Debug)
-    {BSP_DBG_UART_RX,  .mode = GPIO_MODE_AF | GPIO_INPUT_PULL_UP,           .param = 0x0}, 	// USART2_RX (Debug)
-    {BSP_SLIP_UART_TX,  .mode = GPIO_MODE_AF, 	                             .param = 0x0}, 	// USART1_TX
-    {BSP_SLIP_UART_RX,  .mode = GPIO_MODE_INPUT | GPIO_INPUT_PULL_UP,        .param = 0x0}, 	// USART1_RX
+    {BSP_DBG_UART_RX,  .mode = GPIO_INPUT_PULL_UP,                         .param = 0x0}, 	// USART2_RX (Debug)
+    //{BSP_SLIP_UART_TX,  .mode = GPIO_MODE_AF, 	                             .param = 0x0}, 	// USART1_TX
+    //{BSP_SLIP_UART_RX,  .mode = GPIO_MODE_INPUT | GPIO_INPUT_PULL_UP,        .param = 0x0}, 	// USART1_RX
 
+    {BSP_M_1,        .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_OD, 	         .param = 0x1},
+    {BSP_M_2,        .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_OD, 	         .param = 0x1},
+   // {BSP_SM_A1,     .mode = GPIO_MODE_OUTPUT, 	                           .param = 0x00},
+   // {BSP_SM_A2,     .mode = GPIO_MODE_OUTPUT, 	                           .param = 0x00},
+   // {BSP_SM_B1,     .mode = GPIO_MODE_OUTPUT, 	                           .param = 0x00},
+    //{BSP_SM_B2,     .mode = GPIO_MODE_OUTPUT, 	                           .param = 0x00},
+   // {BSP_SM_PWMA,   .mode = GPIO_MODE_AF, 	                               .param = 0x00},
+    //{BSP_SM_PWMB,   .mode = GPIO_MODE_AF, 	                               .param = 0x00},
+    //{BSP_WS2812B,   .mode = GPIO_MODE_AF | GPIO_OUTPUT_OD, 	               .param = 0x00},
 
-    {BSP_SM_A1,     .mode = GPIO_MODE_OUTPUT, 	                           .param = 0x00},
-    {BSP_SM_A2,     .mode = GPIO_MODE_OUTPUT, 	                           .param = 0x00},
-    {BSP_SM_B1,     .mode = GPIO_MODE_OUTPUT, 	                           .param = 0x00},
-    {BSP_SM_B2,     .mode = GPIO_MODE_OUTPUT, 	                           .param = 0x00},
+    {BSP_LCD_CP,   .mode = GPIO_MODE_AF, 	                                 .param = 0},
+    {BSP_LCD_RS,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,              .param = 0},
+    {BSP_LCD_RW,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,              .param = 0},
+    {BSP_LCD_E,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,               .param = 0},
+    {BSP_LCD_D0,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,              .param = 0},
+    {BSP_LCD_D1,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,              .param = 0},
+    {BSP_LCD_D2,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,              .param = 0},
+    {BSP_LCD_D3,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,              .param = 0},
+    {BSP_LCD_BKL,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,             .param = 1},
+
     // I2C
-    {BSP_I2C1_SCL,           .mode = GPIO_MODE_AF | GPIO_OUTPUT_OD,         .param = 1},
-    {BSP_I2C1_SCL,           .mode = GPIO_MODE_AF | GPIO_OUTPUT_OD,         .param = 1},
+    //{BSP_I2C1_SDA,   .mode = GPIO_MODE_AF | GPIO_OUTPUT_OD,         .param = 1},
+   // {BSP_I2C1_SCL,   .mode = GPIO_MODE_AF | GPIO_OUTPUT_OD,         .param = 1},
     // Led
     {BSP_FAIL_LED,   .mode = GPIO_MODE_OUTPUT | GPIO_OUTPUT_PP,             .param = 1},
+
+    {BSP_BTN_NAV1,    .mode = GPIO_INPUT_PULL_UP,                         .param = 0x0},
+    {BSP_BTN_NAV2,    .mode = GPIO_INPUT_PULL_UP,                         .param = 0x0},
 
   };
   GPIO_configPins(gpioCfg, sizeof(gpioCfg) / sizeof(gpioCfg[0]));

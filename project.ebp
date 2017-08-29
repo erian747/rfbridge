@@ -32,7 +32,6 @@
 				</Assembler>
 				<Linker>
 					<Add option="-eb_lib=n" />
-					<Add option="-eb_use_mon" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -101,6 +100,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="bsp.h" />
+		<Unit filename="bus_share.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="bus_share.h" />
 		<Unit filename="config.c">
 			<Option compilerVar="CC" />
 			<Option compile="0" />
@@ -108,11 +111,14 @@
 		</Unit>
 		<Unit filename="config.h" />
 		<Unit filename="crashdump.h" />
-		<Unit filename="dimmer.h" />
 		<Unit filename="fwrev.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="fwrev.h" />
+		<Unit filename="hd44780.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="hd44780.h" />
 		<Unit filename="iir_filter.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
@@ -179,9 +185,6 @@
 		</Unit>
 		<Unit filename="mdsp\libopencm3\usb\usbd.h" />
 		<Unit filename="mdsp\libopencm3\usb\usbstd.h" />
-		<Unit filename="mdsp\lwip\netif\slipif.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="mdsp\mcal\cortex_mx\mcal_cmx.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -218,10 +221,11 @@
 		</Unit>
 		<Unit filename="mdsp\mcal\stm32\mcal_i2c.c">
 			<Option compilerVar="CC" />
-			<Option compile="0" />
-			<Option link="0" />
 		</Unit>
 		<Unit filename="mdsp\mcal\stm32\mcal_nvm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mdsp\mcal\stm32\mcal_nvram.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="mdsp\mcal\stm32\mcal_rcc.c">
@@ -232,8 +236,6 @@
 		</Unit>
 		<Unit filename="mdsp\mcal\stm32\mcal_spi.c">
 			<Option compilerVar="CC" />
-			<Option compile="0" />
-			<Option link="0" />
 		</Unit>
 		<Unit filename="mdsp\mcal\stm32\mcal_stm32.h" />
 		<Unit filename="mdsp\mcal\stm32\mcal_timer.c">
@@ -251,26 +253,8 @@
 		<Unit filename="mdsp\mcal\stm32\mcal_watchdog.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="mdsp\protocols\modbus\modbus.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="mdsp\protocols\modbus\modbus.h" />
 		<Unit filename="mdsp\protocols\modbus\modbus_internal.h" />
-		<Unit filename="mdsp\protocols\modbus\modbus_rtu.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="mdsp\protocols\modbus\rtu_master.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="mdsp\protocols\modbus\rtu_slave.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="mdsp\protocols\modbus\tcp_slave.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="mdsp\protocols\slip.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="mdsp\protocols\slip.h" />
 		<Unit filename="mdsp\target_utils\button.c">
 			<Option compilerVar="CC" />
@@ -292,13 +276,41 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="mdsp\usb\hid_keyboard.h" />
+		<Unit filename="menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="menu.h" />
+		<Unit filename="rotmotor.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="sm.c">
 			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="sm.h" />
+		<Unit filename="solc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="solc.h" />
+		<Unit filename="suncatcher.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
 		</Unit>
 		<Unit filename="testcmd.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="testcmd.h" />
 		<Unit filename="trace_config.h" />
+		<Unit filename="tsl2561.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="tsl2561.h" />
+		<Unit filename="ws2812b.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ws2812b.h" />
 		<Extensions>
 			<code_completion>
 				<search_path add="..\fatfs\src" />
@@ -310,6 +322,37 @@
 				<search_path add="..\lib\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\gcc_ride7" />
 			</code_completion>
 			<debugger>
+				<target_debugging_settings target="Release" active_interface="OpenOCD">
+					<debug_interface interface_id="OpenOCD" ip_address="10.0.2.2" ip_port="3333" path="G:\Produktion\Testutrustning\openocd-0.9.0\bin" executable="openocd.exe" description="" dont_start_server="true" backoff_time="2000" options="0" reg_filter="0" active_family="All" gdb_before_conn="" gdb_after_conn="">
+						<family_options family_id="All">
+							<option opt_id="ID_BOARD_CH" opt_value="" />
+							<option opt_id="ID_INTERFACE_CH" opt_value="stlink-v2" />
+							<option opt_id="ID_TARGET_CH" opt_value="stm32f0x_stlink" />
+							<option opt_id="ID_TEXTCTRL1" opt_value="" />
+							<option opt_id="ID_HW_BKP_LIMIT" opt_value="" />
+							<option opt_id="ID_RESET_CH" opt_value="halt" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_ADD_COMMANDS" opt_value="" />
+							<option opt_id="ID_ADD_CMNDS" opt_value="" />
+						</family_options>
+					</debug_interface>
+					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBLOCKS}\share\contrib" executable="STLinkGDB.exe" description="STM32F030.svd" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
+						<family_options family_id="STMicroelectronics">
+							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
+							<option opt_id="ID_VECTOR_START" opt_value="0x08000000" />
+							<option opt_id="ID_RESET_TYPE" opt_value="System" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_RAM_EXEC" opt_value="0" />
+							<option opt_id="ID_VEC_TABLE" opt_value="0" />
+							<option opt_id="ID_DONT_CONN_RESET" opt_value="0" />
+							<option opt_id="ID_ALL_MODE_DEBUG" opt_value="0" />
+							<option opt_id="ID_DEV_ADDR" opt_value="" />
+							<option opt_id="ID_VERBOSE_LEVEL" opt_value="3" />
+						</family_options>
+					</debug_interface>
+				</target_debugging_settings>
 				<target_debugging_settings target="Debug" active_interface="OpenOCD">
 					<debug_interface interface_id="Generic" ip_address="" ip_port="" path="" executable="" description="" dont_start_server="false" backoff_time="" options="0" reg_filter="0" active_family="" gdb_before_conn="" gdb_after_conn="" />
 					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="%Software\SEGGER\J-Link:InstallPath%" executable="JLinkGDBServer.exe" description="" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
@@ -348,38 +391,7 @@
 							<option opt_id="ID_ADD_CMNDS" opt_value="" />
 						</family_options>
 					</debug_interface>
-					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBLOCKS}\share\contrib" executable="STLinkGDB.exe" description="STM32F072x.svd" dont_start_server="true" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
-						<family_options family_id="STMicroelectronics">
-							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
-							<option opt_id="ID_VECTOR_START" opt_value="0x08000000" />
-							<option opt_id="ID_RESET_TYPE" opt_value="System" />
-							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
-							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
-							<option opt_id="ID_RAM_EXEC" opt_value="0" />
-							<option opt_id="ID_VEC_TABLE" opt_value="0" />
-							<option opt_id="ID_DONT_CONN_RESET" opt_value="0" />
-							<option opt_id="ID_ALL_MODE_DEBUG" opt_value="0" />
-							<option opt_id="ID_DEV_ADDR" opt_value="" />
-							<option opt_id="ID_VERBOSE_LEVEL" opt_value="3" />
-						</family_options>
-					</debug_interface>
-				</target_debugging_settings>
-				<target_debugging_settings target="Release" active_interface="OpenOCD">
-					<debug_interface interface_id="OpenOCD" ip_address="10.0.2.2" ip_port="3333" path="G:\Produktion\Testutrustning\openocd-0.9.0\bin" executable="openocd.exe" description="" dont_start_server="true" backoff_time="2000" options="0" reg_filter="0" active_family="All" gdb_before_conn="" gdb_after_conn="">
-						<family_options family_id="All">
-							<option opt_id="ID_BOARD_CH" opt_value="" />
-							<option opt_id="ID_INTERFACE_CH" opt_value="stlink-v2" />
-							<option opt_id="ID_TARGET_CH" opt_value="stm32f0x_stlink" />
-							<option opt_id="ID_TEXTCTRL1" opt_value="" />
-							<option opt_id="ID_HW_BKP_LIMIT" opt_value="" />
-							<option opt_id="ID_RESET_CH" opt_value="halt" />
-							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
-							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
-							<option opt_id="ID_ADD_COMMANDS" opt_value="" />
-							<option opt_id="ID_ADD_CMNDS" opt_value="" />
-						</family_options>
-					</debug_interface>
-					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBLOCKS}\share\contrib" executable="STLinkGDB.exe" description="STM32F030.svd" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
+					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBLOCKS}\share\contrib" executable="STLinkGDB.exe" description="STM32F072x.svd" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
 						<family_options family_id="STMicroelectronics">
 							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
 							<option opt_id="ID_VECTOR_START" opt_value="0x08000000" />
