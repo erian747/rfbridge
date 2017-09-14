@@ -14,7 +14,7 @@
 #ifdef TEST
   #define S_START() 0
 #else
-  #define S_START()           GPIO_readPin(2,11) // Start position
+  #define S_START()           (GPIO_read(BSP_HOME_POS) == 0) // Start position
 #endif
 
 #define NV_MAGIC_NR 0x4ce7
@@ -177,7 +177,7 @@ static void auto_statemachine(solc_t *self)
     break;
 
     case MOVE_STATE_FIND_START_POS :
-      if(S_START() == 0)
+      if(S_START())
       {
         // If time is somewhere between start time and stoptime
         if(time_test_later(&now, &nv.times[MM_STARTT]) &&
@@ -354,7 +354,7 @@ static void button_repeat(solc_t *self)
 }
 
 
-#define BACKLIGHT_ON_TIME (3*60*10) // Turn on for 3 minutes
+#define BACKLIGHT_ON_TIME (3*60*10ul) // Turn on for 3 minutes
 
 static int backlight_on_timer = BACKLIGHT_ON_TIME;
 
@@ -390,6 +390,8 @@ static void runningRefresh(solc_t *self, void *evt)
     blinkPresc = 0;
     menu_blink(&self->menu);
   }
+  // Reset watchdog timer
+  WDG_resetTimer();
 
   BLF_startTimer(self->timer, REFRESH_TIMER_PERIOD);
 }
@@ -498,7 +500,7 @@ solc_t *solc_init(void)
   ff_dag = nv.ff_dag;
 
   menu_init(&self->menu, main_menu_items);
-
+  lcd_backlight_on();
   //BLF_attach(fs,
   return self;
 }

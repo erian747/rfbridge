@@ -100,9 +100,9 @@ static void menu_item_int_draw(menu_t *m, const menu_item_t *self)
 {
   int *v = (int *)self->storage;
   if(m->state == MENU_STATE_EDIT)
-    sprintf(m->is, "    %04d", *v);
+    sprintf(m->is, "%04d", *v);
   else
-    sprintf(m->is, "    %4d", *v);
+    sprintf(m->is, "%4d", *v);
 }
 
 //----------------------------------------------------------------------------
@@ -177,7 +177,7 @@ static void menu_item_sub_menu_event(menu_t *m, const menu_item_t *item, const m
 
 static void menu_item_sub_menu_draw(menu_t *m, const menu_item_t *self)
 {
-  sprintf(m->is, "  [MENU]");
+  sprintf(m->is, "[MENU]");
 }
 
 const menu_item_class_t menuItemTime = {0, menu_item_time_event, menu_item_time_draw, 0, 3, 2, 3};

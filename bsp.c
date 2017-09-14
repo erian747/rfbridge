@@ -6,7 +6,6 @@
 #include "blf.h"
 #include "trace.h"
 #include "analog.h"
-#include "iir_filter.h"
 #include "button.h"
 #include "stm32f10x.h"
 

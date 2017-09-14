@@ -38,7 +38,7 @@ int target_main(void)
 #endif
 {
   //CRASHDUMP_init();
-  //WDG_init(2000);
+  WDG_init(2000);
   // Init MCU
   MCAL_init();
   // Init framework
@@ -57,11 +57,11 @@ int target_main(void)
   BSP_init();
   //ws2812b_init(rgb_data, sizeof(rgb_data));
   // Start watchdog
-/*
+
 #ifndef DEBUG
   WDG_start();
 #endif
-*/
+
 
   hd44780_init();
 
