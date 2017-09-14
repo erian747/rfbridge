@@ -55,7 +55,7 @@
 				</Assembler>
 			</Target>
 			<Environment>
-				<Variable name="CV_FW_REV" value="0.1.9" />
+				<Variable name="CV_FW_REV" value="0.1.10" />
 			</Environment>
 		</Build>
 		<Device>
@@ -72,8 +72,6 @@
 			<Add option="-g3" />
 			<Add option="-DSTM32F10X" />
 			<Add option='-DFW_REV_STR=&quot;$(CV_FW_REV)&quot;' />
-			<Add option="-DSYNC_USE_TIMER_CAPTURE=1" />
-			<Add option="-DCONFIG_USE_DALI=0" />
 			<Add symbol="STM32F1" />
 			<Add directory=".\Inc" />
 			<Add directory="mdsp\mcal" />
@@ -100,15 +98,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="bsp.h" />
-		<Unit filename="bus_share.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="bus_share.h" />
-		<Unit filename="config.c">
-			<Option compilerVar="CC" />
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
 		<Unit filename="config.h" />
 		<Unit filename="crashdump.h" />
 		<Unit filename="fwrev.c">
@@ -283,11 +273,6 @@
 		<Unit filename="rotmotor.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="sm.c">
-			<Option compilerVar="CC" />
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
 		<Unit filename="sm.h" />
 		<Unit filename="solc.c">
 			<Option compilerVar="CC" />
@@ -303,13 +288,7 @@
 		</Unit>
 		<Unit filename="testcmd.h" />
 		<Unit filename="trace_config.h" />
-		<Unit filename="tsl2561.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="tsl2561.h" />
-		<Unit filename="ws2812b.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="ws2812b.h" />
 		<Extensions>
 			<code_completion>
