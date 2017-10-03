@@ -687,7 +687,7 @@
 							<option opt_id="ID_THUMB_SWI" opt_value="" />
 						</family_options>
 					</debug_interface>
-					<debug_interface interface_id="OpenOCD" ip_address="192.168.2.71" ip_port="3333" path="G:\Produktion\Testutrustning\openocd-0.9.0\bin-x64" executable="openocd.exe" description=".\STM32F103xx.svd" dont_start_server="true" backoff_time="2000" options="0" reg_filter="0" active_family="All" gdb_before_conn="" gdb_after_conn="">
+					<debug_interface interface_id="OpenOCD" ip_address="10.0.2.2" ip_port="3333" path="G:\Produktion\Testutrustning\openocd-0.9.0\bin-x64" executable="openocd.exe" description=".\STM32F103xx.svd" dont_start_server="true" backoff_time="2000" options="0" reg_filter="0" active_family="All" gdb_before_conn="" gdb_after_conn="">
 						<family_options family_id="All">
 							<option opt_id="ID_BOARD_CH" opt_value="" />
 							<option opt_id="ID_INTERFACE_CH" opt_value="stlink-v2" />

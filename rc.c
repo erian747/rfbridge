@@ -266,12 +266,16 @@ void rc_send_anslut(int pin, uint32_t code, uint8_t unit, uint8_t cmd)
 #define bm_get_bit(bm, b)  ((bm & (1 << b)) != 0)
 extern void mqtt_link_publish_rcrx(const char *s);
 
+typedef struct
+{
+  uint8_t state;
+  uint16_t hl;
+  uint16_t ll;
+  uint32_t data;
+  uint32_t correct_decodes;
+} ev1527_t;
 
-static uint8_t ev1527_state=0;
-static uint32_t ev1527_data=0;
-static uint16_t hl, ll;
 
-static int correct_decodes = 0;
 
 /*
 static void domoticz_send(uint32_t data)
@@ -292,44 +296,48 @@ static void domoticz_send(uint32_t data)
 }
 */
 
-static int ev1527_decode(uint16_t pw, char *s, int sl)
+static int ev1527_decode(ev1527_t *self, uint16_t pw, char *s, int sl, uint32_t min_sync_len, uint32_t short_long_delimiter)
 {
   int res = 0;
   if(pw == 0) {
-    ev1527_state = 0;
+    self->state = 0;
     GPIO_write(BSP_LED_RX, 1);
-  } else if(pw > 12000 && pw < 14000) {
+  } else if(pw > min_sync_len && pw < (min_sync_len+2000)) {
     TTRACE(TTRACE_INFO, "EV1527: Sync detected enter data state\n");
-    ev1527_data = 0;
-    ev1527_state = 2;
-  } else if(ev1527_state >= 2) {
-    if(pw > 1500) {
-      TTRACE(TTRACE_INFO, "EV1527: To long data pulse %dus in state %d\n", pw, ev1527_state);
-      ev1527_state = 0;
+    self->data = 0;
+    self->state = 2;
+    self->hl = self->ll = 0;
+  } else if(self->state >= 2) {
+    if(pw > short_long_delimiter*2) {
+      TTRACE(TTRACE_INFO, "EV1527: To long data pulse %dus in state %d\n", pw, self->state);
+      self->state = 0;
       GPIO_write(BSP_LED_RX, 1);
     } else {
 
-      if(ev1527_state & 1) {
-        bm_add_bit(ev1527_data, pw > 800);
+      if(self->state & 1) {
+        bm_add_bit(self->data, pw > short_long_delimiter);
       }
-      ev1527_state++;
-
-      if(ev1527_state & 1) {
-        hl = pw;
+      if(pw > short_long_delimiter) {
+          self->hl += pw;
       } else {
-        ll = pw;
+          self->ll += pw;
       }
+
+      self->state++;
+
       // Light up RX led if at least some bits are received
-      if(ev1527_state == 24) {
+      if(self->state == 24) {
         GPIO_write(BSP_LED_RX, 0);
       }
-      else if(ev1527_state >= (24*2)+2) {
-        correct_decodes++;
-        TTRACE(TTRACE_INFO, "EV1527: 0x%x lo %d, high %d, n: %d\n", ev1527_data, ll, hl, correct_decodes);
-        snprintf(s, sl, "EV1527: %lu",ev1527_data);
+      else if(self->state >= (24*2)+2) {
+        self->correct_decodes++;
+        TTRACE(TTRACE_INFO, "EV1527: 0x%x lo %d, high %d, n: %d\n", self->data, self->ll, self->hl, self->correct_decodes);
+        snprintf(s, sl, "EV1527: %lu",self->data);
+        self->hl /= 24;
+        self->ll /= 24; // Take average
         res = 1;
         GPIO_write(BSP_LED_RX, 1);
-        ev1527_state = 0;
+        self->state = 0;
       }
     }
   }
@@ -519,6 +527,8 @@ static void nexa_decode(const uint16_t *rb, uint16_t rawLength)
 }
 #endif
 
+static ev1527_t ev1527_slow, ev1527_fast;
+
 
 void rc_start_rx(void)
 {
@@ -546,7 +556,13 @@ void rc_poll(void)
   char decs[128];
   while(!CBUF_IsEmpty(rx_fifo)) {
     uint16_t pw = CBUF_Pop(rx_fifo);
-    res = ev1527_decode(pw, decs, sizeof(decs));
+    // EV1527 with slow timing
+    res = ev1527_decode(&ev1527_slow, pw, decs, sizeof(decs), 12000, 800);
+    if(res) {
+      rc_publish_if_no_repeat(decs);
+    }
+    // EV1527 with fast timing
+    res = ev1527_decode(&ev1527_fast, pw, decs, sizeof(decs), 6500, 450);
     if(res) {
       rc_publish_if_no_repeat(decs);
     }
