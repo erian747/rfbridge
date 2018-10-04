@@ -273,6 +273,7 @@ typedef struct
   uint16_t ll;
   uint32_t data;
   uint32_t correct_decodes;
+  uint16_t sync_len;
 } ev1527_t;
 
 
@@ -302,8 +303,9 @@ static int ev1527_decode(ev1527_t *self, uint16_t pw, char *s, int sl, uint32_t 
   if(pw == 0) {
     self->state = 0;
     GPIO_write(BSP_LED_RX, 1);
-  } else if(pw > min_sync_len && pw < (min_sync_len+2000)) {
+  } else if(pw > min_sync_len && pw < (min_sync_len+3000)) {
     TTRACE(TTRACE_INFO, "EV1527: Sync detected enter data state\n");
+    self->sync_len = pw;
     self->data = 0;
     self->state = 2;
     self->hl = self->ll = 0;
@@ -557,12 +559,12 @@ void rc_poll(void)
   while(!CBUF_IsEmpty(rx_fifo)) {
     uint16_t pw = CBUF_Pop(rx_fifo);
     // EV1527 with slow timing
-    res = ev1527_decode(&ev1527_slow, pw, decs, sizeof(decs), 12000, 800);
+    res = ev1527_decode(&ev1527_slow, pw, decs, sizeof(decs), 13000, 950);
     if(res) {
       rc_publish_if_no_repeat(decs);
     }
     // EV1527 with fast timing
-    res = ev1527_decode(&ev1527_fast, pw, decs, sizeof(decs), 6500, 450);
+    res = ev1527_decode(&ev1527_fast, pw, decs, sizeof(decs), 6000, 450);
     if(res) {
       rc_publish_if_no_repeat(decs);
     }

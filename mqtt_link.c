@@ -6,7 +6,7 @@
 #include <string.h>
 #include "blf.h"
 
-static mqtt_client_t mqtt_client;
+static mqtt_client_t *mqtt_client;
 static void connect_to_server(void);
 
 
@@ -41,14 +41,15 @@ static void connect_to_server(void)
   client_info.keep_alive = 120;
   ip_addr_t ipaddr;
   IP_ADDR4(&ipaddr, 192, 168, 2, 1);
-  mqtt_client_connect(&mqtt_client, &ipaddr, connect_callback, 0, &client_info);
+  mqtt_client = mqtt_client_new();
+  mqtt_client_connect(mqtt_client, &ipaddr, 1883, connect_callback, 0, &client_info);
 }
 
 void mqtt_link_publish(void)
 {
-  if(mqtt_client_is_connected(&mqtt_client)) {
+  if(mqtt_client_is_connected(mqtt_client)) {
     const char data[] = {"rx_data"};
-    err_t err = mqtt_publish(&mqtt_client, "rclink/rx433", data, strlen(data), 0, 0, publish_callback, 0);
+    err_t err = mqtt_publish(mqtt_client, "rclink/rx433", data, strlen(data), 0, 0, publish_callback, 0);
     if(err != ERR_OK) {
       TTRACE(TTRACE_WARN, "Publish result: \n", err);
     }
@@ -57,8 +58,8 @@ void mqtt_link_publish(void)
 
 void mqtt_link_publish_rcrx(const char *s)
 {
-  if(mqtt_client_is_connected(&mqtt_client)) {
-    err_t err = mqtt_publish(&mqtt_client, "rclink/rx433", s, strlen(s), 0, 0, publish_callback, 0);
+  if(mqtt_client_is_connected(mqtt_client)) {
+    err_t err = mqtt_publish(mqtt_client, "rclink/rx433", s, strlen(s), 0, 0, publish_callback, 0);
     if(err != ERR_OK) {
       TTRACE(TTRACE_WARN, "Publish result: \n", err);
     }

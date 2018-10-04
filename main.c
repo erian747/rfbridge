@@ -65,7 +65,7 @@ int target_main(void)
   rc_timer_init();
 
   network_init();
-  
+
   mqtt_link_init();
   // Start scheduler
   BLF_schedule();
