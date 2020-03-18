@@ -25,7 +25,7 @@ void ttrace_key_cb(char data)
     lampState = !lampState;
     TTRACE(TTRACE_INFO, "Lamp set to: %s\n", lampState ? "On" : "Off");
     rc_send_nexa(0, 0x12EF212, 0, lampState);
-      
+
   }
   else if(data == 'h')
   {
@@ -36,7 +36,7 @@ void ttrace_key_cb(char data)
   }
   else if(data == 'p')
   {
-    mqtt_link_publish();
+    //mqtt_link_publish();
   }
   else
   {

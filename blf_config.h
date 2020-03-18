@@ -1,9 +1,14 @@
 #ifndef BLF_CONFIG
 #define BLF_CONFIG
 
+#include "mcal_config.h"
+
 #include <stdint.h>
 // Enable debug asserts
 #define BLF_DEBUG 1
+
+#define BLF_PORT_CORTEXM 1
+#define BLF_CORTEXM_SYSFREQ MCU_SYSFREQ
 
 // Timer usage
 #define BLF_USE_TIMERS 1

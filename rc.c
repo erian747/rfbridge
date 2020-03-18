@@ -183,45 +183,50 @@ static uint8_t simulated_rc_pin(void)
 
 #define rx_rc_pin_get() simulated_rc_pin()
 #else
-#define rx_rc_pin_get() GPIO_read(BSP_315MHZ_RX) // GPIO_read(BSP_433MHZ_RX)
+#define rx_rc_pin_get() GPIO_read(BSP_433MHZ_RX) // GPIO_read(BSP_433MHZ_RX)
 #endif
 
 static uint32_t repeat_supress_tmr = 0;
 static uint8_t rx_found_valid = 0;
+
+
+#define DIG_FILTER_MAX 6
+
+#define DIG_FILTER_VALUE_LOW 2
+#define DIG_FILTER_VALUE_HIGH 4
+
+static uint8_t dig_filter = 0;
 
 static void timer_cb(void *ctx)
 {
   if(repeat_supress_tmr != 0) {
     repeat_supress_tmr--;
   }
-  uint8_t pv = rx_rc_pin_get();
+  uint8_t din = rx_rc_pin_get();
+
   // If rx pin have not changed state
-  if(prev_rx_pin_state == pv) {
+  if(prev_rx_pin_state == din) {
+
     // dont roll over
     if(rx_pin_stable_count < RX_IDLE_TIME) {// If not in idle state
 
       rx_pin_stable_count++;
       if(rx_pin_stable_count >= RX_IDLE_TIME) {// No activity for 50ms, become idle
 
-        if(pv != 0) {
-          TTRACE(TTRACE_WARN, "rc_timer_cb: Expected low level when idle\n");
-        }
-        if(!CBUF_IsFull(rx_fifo) && rx_found_valid) {
+        if(!CBUF_IsFull(rx_fifo)) {
           CBUF_Push(rx_fifo, 0); // Signal reset state machine
           rx_found_valid = 0;
+          TTRACE(TTRACE_WARN, "rc_timer_cb: Return to idle\n");
+        } else {
+          TTRACE(TTRACE_WARN, "rc_timer_cb: FIFO full\n");
         }
       }
     }
 
   } else { // Changed state
     uint32_t us = rx_pin_stable_count * RX_POLL_PERIOD_US;
-    if(us >= 100 && us <= 30000) {
-      rx_found_valid = 1;
-      CBUF_Push(rx_fifo, us);
-    } else if(rx_found_valid) {
-      CBUF_Push(rx_fifo, 0);
-    }
-    prev_rx_pin_state = pv;  // Update prev pin state
+    CBUF_Push(rx_fifo, us);
+    prev_rx_pin_state = din;  // Update prev pin state
     rx_pin_stable_count = 0; // Reset stable counter
   }
 
@@ -300,22 +305,29 @@ static void domoticz_send(uint32_t data)
 static int ev1527_decode(ev1527_t *self, uint16_t pw, char *s, int sl, uint32_t min_sync_len, uint32_t short_long_delimiter)
 {
   int res = 0;
-  if(pw == 0) {
+  if(pw <  100 || pw > 30000) {
+    if(self->state != 0) {
+      TTRACE(TTRACE_INFO, "EV1527: Wrong pulse length %dus, resetting to idle state from state %d\n", pw, self->state);
+    }
     self->state = 0;
     GPIO_write(BSP_LED_RX, 1);
   } else if(pw > min_sync_len && pw < (min_sync_len+3000)) {
-    TTRACE(TTRACE_INFO, "EV1527: Sync detected enter data state\n");
+
     self->sync_len = pw;
     self->data = 0;
     self->state = 2;
     self->hl = self->ll = 0;
   } else if(self->state >= 2) {
     if(pw > short_long_delimiter*2) {
-      TTRACE(TTRACE_INFO, "EV1527: To long data pulse %dus in state %d\n", pw, self->state);
+      if(self->state > 2) {
+        TTRACE(TTRACE_INFO, "EV1527: To long data pulse %dus in state %d\n", pw, self->state);
+      }
       self->state = 0;
       GPIO_write(BSP_LED_RX, 1);
     } else {
-
+      if(self->state == 2) {
+        TTRACE(TTRACE_INFO, "EV1527: Sync + first pulse received, sync pw=%d\n", self->sync_len);
+      }
       if(self->state & 1) {
         bm_add_bit(self->data, pw > short_long_delimiter);
       }
@@ -467,25 +479,30 @@ static int flamingo_decode(uint16_t pw, char *s, int sl)
 
 #define DBG_MAX_PULSES 64
 static uint8_t dbg_state=0;
-static uint32_t dbg_data=0;
 static uint16_t dbg_pulses[DBG_MAX_PULSES];
 
 
 static int debug_decode(uint16_t pw, char *s, int sl)
 {
   int res = 0;
+  // If a sync or reset
   if(pw > 3500 || pw == 0) {
+    // If at least this many pulses received
     if(dbg_state > 24) {
+      // Print pulse times all pulses
       int o = snprintf(s, sl, "DBG: ");
       for(int n = 0; n < dbg_state && sl > o; n++) {
         o+= snprintf(s+o, sl-o, "%u,", dbg_pulses[n]);
       }
+      // Indicate data received
       res = 1;
     }
+    // If reset set state to 0 otherwise start receiving
     dbg_state = (pw == 0) ? 0 : 1;
   }
-
+  // If not in reset state
   if(dbg_state > 0) {
+    // Store pulse length
     if(dbg_state <= DBG_MAX_PULSES) {
       dbg_pulses[dbg_state-1] = pw;
     }
@@ -525,7 +542,6 @@ static void nexa_decode(const uint16_t *rb, uint16_t rawLength)
     }
   }
   TTRACE(TTRACE_INFO, "RC_PARSE: Found nexa rc string %s\n", outputstr);
-  printf("RC_PARSE: Found nexa rc string %s\n", outputstr);
 }
 #endif
 
@@ -547,11 +563,14 @@ static void rc_publish_if_no_repeat(char *decs)
 {
   // If decode string is different or repeat suppress timer count down to zero
   if(strcmp(decs_prev, decs_prev) != 0 || repeat_supress_tmr == 0) {
-    mqtt_link_publish_rcrx(decs);
+    //mqtt_link_publish_rcrx(decs);
     strcpy(decs_prev, decs);
       repeat_supress_tmr = 1000000 / RX_POLL_PERIOD_US;
   }
 }
+
+static char debug_s[256];
+
 void rc_poll(void)
 {
   int res;
@@ -559,13 +578,17 @@ void rc_poll(void)
   while(!CBUF_IsEmpty(rx_fifo)) {
     uint16_t pw = CBUF_Pop(rx_fifo);
     // EV1527 with slow timing
+/*
     res = ev1527_decode(&ev1527_slow, pw, decs, sizeof(decs), 13000, 950);
     if(res) {
+      TTRACE(TTRACE_INFO, "RC_PARSE: Found EV1527 slow rc string %s\n", decs);
       rc_publish_if_no_repeat(decs);
     }
+
     // EV1527 with fast timing
     res = ev1527_decode(&ev1527_fast, pw, decs, sizeof(decs), 6000, 450);
     if(res) {
+      TTRACE(TTRACE_INFO, "RC_PARSE: Found EV1527 fast rc string %s\n", decs);
       rc_publish_if_no_repeat(decs);
     }
     res = nexa_decode(pw, decs, sizeof(decs));
@@ -576,7 +599,15 @@ void rc_poll(void)
     if(res) {
       rc_publish_if_no_repeat(decs);
     }
+  */
+
+    res = debug_decode(pw, debug_s, sizeof(debug_s));
+    if(res) {
+      TTRACE(TTRACE_INFO, "%s\n", debug_s);
+    }
   }
+
+
 
 }
 
@@ -584,6 +615,7 @@ void rc_poll(void)
 
 void rc_timer_init(void)
 {
+  TTRACE(TTRACE_INFO, "RC init\n");
   CBUF_Init(rx_fifo);
 
   rcTim = TIM_create(BSP_RC_TIMER);

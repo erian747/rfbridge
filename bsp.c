@@ -6,9 +6,8 @@
 #include "blf.h"
 #include "trace.h"
 #include "analog.h"
-#include "iir_filter.h"
 #include "button.h"
-#include "stm32f0xx.h"
+
 
 #define SUPPLY_VOLTAGE_UVLO    8000 // mv
 #define SUPPLY_VOLTAGE_PGOODL  8200 // mv
@@ -111,7 +110,7 @@ void BSP_init(void)
     {BSP_DBG_UART_RX,  .mode = GPIO_MODE_AF | GPIO_INPUT_PULL_UP,           .param = 0x0}, 	// USART2_RX (Debug)
     {BSP_SLIP_UART_TX,  .mode = GPIO_MODE_AF, 	                             .param = 0x0}, 	// USART1_TX
     {BSP_SLIP_UART_RX,  .mode = GPIO_MODE_INPUT | GPIO_INPUT_PULL_UP,        .param = 0x0}, 	// USART1_RX
-
+    {BSP_433MHZ_RX,   .mode = GPIO_MODE_INPUT,                                .param = 0x0},
 
    // {BSP_RC_TX_PIN,        .mode = GPIO_MODE_OUTPUT,                       .param = 0},
 

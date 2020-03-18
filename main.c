@@ -55,7 +55,7 @@ int target_main(void)
 
   //hid_keyboard_t *kbd = hid_keyboard_create();
 
-  usart_if_t *debugUart = USART_create(1);
+  usart_if_t *debugUart = USART_create(0);
 #if defined(TTRACE_ON)
     // Set output UART for debug messages
     TTRACE_setOutputUart(debugUart);
@@ -64,9 +64,9 @@ int target_main(void)
 
   rc_timer_init();
 
-  network_init();
+  //network_init();
 
-  mqtt_link_init();
+  //mqtt_link_init();
   // Start scheduler
   BLF_schedule();
 

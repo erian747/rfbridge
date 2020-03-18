@@ -1,6 +1,6 @@
 
 // Configuration for MCAL version
-#define MCAL_CONFIG_REV_HIGH  1
+#define MCAL_CONFIG_REV_HIGH  3
 #define MCAL_CONFIG_REV_MID   0
 #define MCAL_CONFIG_REV_LOW   0
 
