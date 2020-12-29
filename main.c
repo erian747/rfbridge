@@ -5,17 +5,15 @@
 #include "mcal.h"
 #include "trace.h"
 #include "blf.h"
-#include "network.h"
 #include "bsp.h"
 #include "fwrev.h"
-
+#include "console.h"
 #include "config.h"
 #include "crashdump.h"
-#include "usb/hid_keyboard.h"
+#include "rc_tx.h"
+#include "rc_rx.h"
 
-extern void mqtt_link_init(void);
-extern void rc_timer_init(void);
-extern void rc_poll(void);
+
 /**
   * @brief Program entry point
   * @param None
@@ -38,22 +36,10 @@ int target_main(void)
   TTRACE_init();
 #endif
 
-
   // Init configuration
-
  // config_init();
 
-
-
   BSP_init();
-  // Start watchdog
-/*
-#ifndef DEBUG
-  WDG_start();
-#endif
-*/
-
-  //hid_keyboard_t *kbd = hid_keyboard_create();
 
   usart_if_t *debugUart = USART_create(0);
 #if defined(TTRACE_ON)
@@ -62,11 +48,13 @@ int target_main(void)
 #endif
 
 
-  rc_timer_init();
+  rc_tx_init();
+  rc_rx_init();
 
-  //network_init();
+  extern void usb_serial_init(void);
+  usb_serial_init();
 
-  //mqtt_link_init();
+  console_init();
   // Start scheduler
   BLF_schedule();
 
@@ -75,7 +63,7 @@ int target_main(void)
     TTRACE_process();
 
 //    config_poll();
-    rc_poll();
+    rc_rx_poll();
   }
 
   return 0;

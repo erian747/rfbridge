@@ -7,7 +7,8 @@
 /* Application */
 #define TRACE_ENABLE_BSP              TTRACE_INFO
 #define TRACE_ENABLE_MAIN             TTRACE_INFO
-#define TRACE_ENABLE_RC               TTRACE_INFO
+#define TRACE_ENABLE_RC_TX            TTRACE_INFO
+#define TRACE_ENABLE_RC_RX            TTRACE_INFO
 #define TRACE_ENABLE_TESTCMD          TTRACE_INFO
 
 /* Drivers */

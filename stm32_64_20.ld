@@ -51,7 +51,26 @@ SECTIONS
     KEEP(*(.vectors)) /* Vector table code */
     . = ALIGN(4);
   } >CODE
-
+  /* Console command console_firstcmd */
+  .console_firstcmd :
+  {
+    . = ALIGN(4);
+    KEEP(*(.console_firstcmd))
+    . = ALIGN(4);
+  } >CODE
+  .console_cmd :
+  {
+    . = ALIGN(4);
+    KEEP(*(.console_cmd))
+    . = ALIGN(4);
+  } >CODE
+  /* Console command last*/
+  .console_lastcmd :
+  {
+    . = ALIGN(4);
+    KEEP(*(.console_lastcmd))
+    . = ALIGN(4);
+  } >CODE
   /* The program code and other data goes into CODE */
   .text :
   {
