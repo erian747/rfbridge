@@ -381,7 +381,7 @@ static usbd_respond cdc_control(usbd_device *dev, usbd_ctlreq *req, usbd_rqc_cal
 
 static void cdc_rxonly(usbd_device *dev, uint8_t event, uint8_t ep) {
   uint8_t buf[CDC_DATA_SZ];
-  int len = usbd_ep_read(dev, ep, fifo, CDC_DATA_SZ);
+  int len = usbd_ep_read(dev, ep, buf, CDC_DATA_SZ);
   if(rx_cb != NULL && len > 0) {
     rx_cb(rx_ctx, buf, len);
   }

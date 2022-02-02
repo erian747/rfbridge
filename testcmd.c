@@ -11,7 +11,9 @@
 #include "fwrev.h"
 #include "console.h"
 #include "rc_tx.h"
-// NEXA home code 01001011101111001000010010 = 0x12EF212
+
+// NEXA code 01001011101111001000010010 = 0x12EF212
+#define NEXA_TEST_CODE 0x12EF212
 
 extern void rc_send_nexa(int pin, uint32_t code, uint8_t unit, uint8_t cmd);
 
@@ -72,7 +74,7 @@ static void rusta_enocde_raw(uint8_t group, uint8_t sw, uint8_t cmd, uint8_t rep
   *p++ = 'C';
   *p++ = 0;
   TTRACE(TTRACE_INFO, "RAW: %s\n", raw_cmd);
-  rc_tx_raw(raw_cmd, strlen(raw_cmd));
+  rc_tx_raw(raw_cmd);
 }
 
 
@@ -80,43 +82,47 @@ static void rusta_enocde_raw(uint8_t group, uint8_t sw, uint8_t cmd, uint8_t rep
 //-------------------------------------------------------------------------------------------------------
 // Nexa / Anslut / Proove
 
-#if 0
-#define ANSLUT_PULSE_HIGH 250
-#define ANSLUT_PULSE_ONE_LOW 250
-#define ANSLUT_PULSE_ZERO_LOW 1450 //1250
-#define ANSLUT_PULSE_SYNC_LOW 2750 //2500
-#define ANSLUT_PULSE_PAUSE_LOW 10750
+
+//#define ANSLUT_PULSE_HIGH 250
+//#define ANSLUT_PULSE_ONE_LOW 250
+#define ANSLUT_PULSE_SHORT 250 // A
+#define ANSLUT_PULSE_ZERO_LOW 1450 // B
+#define ANSLUT_PULSE_SYNC_LOW 2750 //C
+#define ANSLUT_PULSE_PAUSE_LOW 10750 // D
 
 #define ANSLUT_REPEAT 6
 #define NEXA_REPEAT 5
 
 
-static uint16_t *anslut_bit(uint16_t *p, uint8_t val)
+static char *anslut_bit(char *p, uint8_t val)
 {
   if(val != 0) {
-    *p++ = ANSLUT_PULSE_HIGH;      // 0
-    *p++ = ANSLUT_PULSE_ZERO_LOW;
-    *p++ = ANSLUT_PULSE_HIGH;      // 1
-    *p++ = ANSLUT_PULSE_ONE_LOW;
+    *p++ = 'A';      // 0
+    *p++ = 'B';
+    *p++ = 'A';      // 1
+    *p++ = 'A';
   } else {
-    *p++ = ANSLUT_PULSE_HIGH;      // 1
-    *p++ = ANSLUT_PULSE_ONE_LOW;
-    *p++ = ANSLUT_PULSE_HIGH;      // 0
-    *p++ = ANSLUT_PULSE_ZERO_LOW;
+    *p++ = 'A';      // 1
+    *p++ = 'A';
+    *p++ = 'A';      // 0
+    *p++ = 'B';
   }
   return p;
 }
 
-static void rc_send_anslut_proove_nexa(int pin, uint32_t code, uint8_t unit, uint8_t cmd, uint8_t channel_dev, uint8_t repeat)
+static void rc_send_anslut_proove_nexa(uint32_t code, uint8_t unit, uint8_t cmd, uint8_t channel_dev, uint8_t repeat)
 {
-  uint16_t *p = tx_time_table;
-  *p++ = ANSLUT_PULSE_HIGH;
-  *p++ = ANSLUT_PULSE_SYNC_LOW; // SYNC
+  char raw_cmd[256];
+  char *p = raw_cmd;
+
+  p += sprintf(p, "%d,%d,%d,%d,%d:", ANSLUT_PULSE_SHORT, ANSLUT_PULSE_ZERO_LOW, ANSLUT_PULSE_SYNC_LOW, ANSLUT_PULSE_PAUSE_LOW, repeat);
+
+  *p++ = 'A';
+  *p++ = 'C'; // SYNC
 
   uint16_t n;
   for(n = 0; n < 26; n++) { // TxCode 26 bits
     uint8_t b = (code & ((uint32_t)1 << 25)) != 0;
-    //uint8_t b = (code & 0x80000000) != 0;
     code <<=1;
     p = anslut_bit(p, b);
   }
@@ -134,43 +140,46 @@ static void rc_send_anslut_proove_nexa(int pin, uint32_t code, uint8_t unit, uin
 
   p = anslut_bit(p, (unit >> 1) & 1); // Dev/Unit
   p = anslut_bit(p, (unit >> 0) & 1); // Dev/Unit
-  *p++ = ANSLUT_PULSE_HIGH;
-  *p++ = ANSLUT_PULSE_PAUSE_LOW;
-
-  tx_time_table_length = p - tx_time_table;
-  //send_common(pin, repeat, (p - tx_time_table));
+  *p++ = 'A';
+  *p++ = 'D';
+  *p++ = 0;
+  TTRACE(TTRACE_INFO, "RAW: %s\n", raw_cmd);
+  rc_tx_raw(raw_cmd);
 }
-#endif
 
 
-void ttrace_key_cb(char data) {
-    if(console_on) {
-      console_insert(data);
-      return;
-    }
+void ttrace_key_cb(char data)
+{
+  if(console_on) {
+    console_insert(data);
+    return;
+  }
 
-    if(data == '1') {
+  if(data == '1') {
 //    rc_send_nexa(0, 0x12EF212, 0, lampState);
 
-    } else if(data == 'h') {
-      TTRACE(TTRACE_INFO, "RFBridge rev: %s\nCommands:\n", FWREV_getString());
-      TTRACE(TTRACE_INFO, "h : Help menu\n");
+  } else if(data == 'h') {
+    TTRACE(TTRACE_INFO, "RFBridge rev: %s\nCommands:\n", FWREV_getString());
+    TTRACE(TTRACE_INFO, "h : Help menu\n");
 
-    } else if(data == 'e') {
-      rusta_enocde_raw(2, 2, 1,3);
-    } else if(data == 'f') {
-      rusta_enocde_raw(2, 2, 0,3);
-    } else if(data == 'c') {
-      console_on = 1;
-    } else {
-    }
-
-
+  } else if(data == 'e') {
+    //rusta_enocde_raw(2, 2, 1,3);
+    rc_send_anslut_proove_nexa(NEXA_TEST_CODE, 0, 1, 0, NEXA_REPEAT);
+  } else if(data == 'f') {
+    rc_send_anslut_proove_nexa(NEXA_TEST_CODE, 0, 0, 0, NEXA_REPEAT);
+    //rusta_enocde_raw(2, 2, 0,3);
+  } else if(data == 'c') {
+    console_on = 1;
+  } else {
   }
 
 
+}
 
 
 
-  void testcmd_init(void) {
-  }
+
+
+void testcmd_init(void)
+{
+}

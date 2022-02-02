@@ -12,8 +12,14 @@
 #include "crashdump.h"
 #include "rc_tx.h"
 #include "rc_rx.h"
+#include "usb_serial.h"
 
-
+static void usb_serial_rx_cb(void *ctx, uint8_t *data, size_t len)
+{
+  while(len--) {
+    console_insert(*data++);
+  }
+}
 /**
   * @brief Program entry point
   * @param None
@@ -51,10 +57,11 @@ int target_main(void)
   rc_tx_init();
   rc_rx_init();
 
-  extern void usb_serial_init(void);
   usb_serial_init();
 
   console_init();
+
+  usb_serial_set_rx_cb(usb_serial_rx_cb, NULL);
   // Start scheduler
   BLF_schedule();
 
@@ -62,8 +69,8 @@ int target_main(void)
   while (1) {
     TTRACE_process();
 
-//    config_poll();
     rc_rx_poll();
+    rc_tx_poll();
   }
 
   return 0;

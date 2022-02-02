@@ -151,7 +151,7 @@ static void timer_cb(void *ctx)
 
 #define bm_add_bit(bm, b)  bm = (bm << 1) | ((b) != 0)
 #define bm_get_bit(bm, b)  ((bm & (1 << b)) != 0)
-extern void mqtt_link_publish_rcrx(const char *s);
+
 
 typedef struct
 {
@@ -403,7 +403,6 @@ static void rc_publish_if_no_repeat(char *decs)
 {
   // If decode string is different or repeat suppress timer count down to zero
   if(strcmp(decs_prev, decs_prev) != 0 || repeat_supress_tmr == 0) {
-    //mqtt_link_publish_rcrx(decs);
     strcpy(decs_prev, decs);
     repeat_supress_tmr = 1000000 / RX_POLL_PERIOD_US;
   }

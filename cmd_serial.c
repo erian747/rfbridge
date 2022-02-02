@@ -31,7 +31,7 @@ static int do_send_raw(int argc, char** argv)
 		console_printf("send_raw [data]\n");
 	} else {
 	  //rc_tx_raw()
-    int r = rc_tx_raw(argv[1], strlen(argv[1]));
+    int r = rc_tx_raw(argv[1]);
 	  if(r < 0) {
       console_printf("Failed decoding raw tx string\n");
 	  } else {

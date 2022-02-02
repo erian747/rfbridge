@@ -107,6 +107,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="config.h" />
+		<Unit filename="console.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="console.h" />
 		<Unit filename="crashdump.h" />
 		<Unit filename="fwrev.c">
 			<Option compilerVar="CC" />
@@ -243,10 +247,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="mdsp\blf\blf.h" />
-		<Unit filename="mdsp\cli\console.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="mdsp\cli\console.h" />
 		<Unit filename="mdsp\cli\microrl.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -332,7 +332,7 @@
 		<Unit filename="mdsp\usb\hid_keyboard.h" />
 		<Unit filename="microrl_config.h" />
 		<Unit filename="network.h" />
-		<Unit filename="rc.c">
+		<Unit filename="rc_rx.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="rc_rx.h" />
